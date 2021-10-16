@@ -1,0 +1,104 @@
+
+<style language="css">
+	body{
+		
+	}
+	#chat_window{
+		height: 80%;
+		width: 90%;
+		margin-left: 5%;
+		margin-top: 0.1%;
+		font-size: 95%;
+	}
+	#message{
+		height: 6.7%;
+		width: 80%;
+		margin-left: 6%;
+		margin-top: 0.55%;
+		font-size: 95%;
+	}
+	#send{
+		height: 6.7%;
+		width: 6%;
+		margin-left: 1%;
+		margin-top: 0%;
+		font-size: 95%;
+	}
+	#add{
+		margin-left: 20%;
+	}
+</style>
+
+<html lang="de">
+	<head>
+		<meta charset="UTF-8">
+		<title id="TabTitle">AJAX - Chat</title>
+		<script>
+			var name = prompt("Nickname: ");
+			if(name==""||name==null){
+				name="user";
+			}
+			document.getElementById("TabTitle").text="Chat: "+name;
+			refresh();
+			refreshTimer = setInterval(refresh, 3000);
+			
+			function refresh(){
+				if (window.XMLHttpRequest)
+				{
+					// AJAX nutzen mit IE7+, Chrome, Firefox, Safari, Opera
+					xmlhttp=new XMLHttpRequest();
+				}
+				else
+				{
+					// AJAX mit IE6, IE5
+					xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+				}
+				xmlhttp.onreadystatechange=function()
+				{
+					if (xmlhttp.readyState==4 && xmlhttp.status==200)
+					{
+						document.getElementById("chat_window").innerHTML = xmlhttp.responseText.split("["+name+"]").join("   ["+name+"]");
+						var textarea = document.getElementById('chat_window');
+						textarea.scrollTop = textarea.scrollHeight;
+					}
+				}
+				xmlhttp.open("GET","refresh.php",true);
+				xmlhttp.send();
+			}
+			function SendMsg(content){
+				if (content=="")
+				{
+					return;
+				}
+				if (window.XMLHttpRequest)
+				{
+					// AJAX nutzen mit IE7+, Chrome, Firefox, Safari, Opera
+					xmlhttp=new XMLHttpRequest();
+				}
+				else
+				{
+					// AJAX mit IE6, IE5
+					xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+				}
+				xmlhttp.onreadystatechange=function()
+				{
+					if (xmlhttp.readyState==4 && xmlhttp.status==200)
+					{
+						document.getElementById("chat_window").innerHTML = xmlhttp.responseText.split("["+name+"]").join("   ["+name+"]");
+						document.getElementById("message").value = "";
+						var textarea = document.getElementById('chat_window');
+						textarea.scrollTop = textarea.scrollHeight;
+					}
+				}
+				content = "[" + name + "] " + content;
+				xmlhttp.open("GET","send.php?q="+content,true);
+				xmlhttp.send();
+			}
+		</script>
+	</head>
+	<body>
+		<textarea id="chat_window" readonly overflow:auto></textarea>
+		<textarea placeholder="Message" id="message" overflow:auto></textarea>
+		<input type="Button" value="Send" onclick="SendMsg(document.getElementById('message').value)" id="send">
+	</body>
+</html>
